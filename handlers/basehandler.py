@@ -2,8 +2,8 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from keyboards import get_main_keyboard, menu_btn_txt, price_btn_txt, call_btn_txt, get_food_keyboard, back_btn_txt, \
     burger_btn_txt, get_burger_buttons
-from database.models import User,Order,Product
-from database.mysql_connector import db
+from MyDB.models import User,Order,Product
+from MyDB.mysql_connector import db
 from service import *
 import os
 import json
@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 class BaseHandler(ABC):
     def __init__(self):
-        self._handlers: Dict[str, Callable[[Update, ContextTypes.DEFAULT_TYPE], None]] = {}
-        self._fallback_handler: Optional[Callable[[Update, ContextTypes.DEFAULT_TYPE], str]] = None
+        self._handlers: Dict[str, Callable[[Update, ContextTypes.DEFAULT_TYPE], Awaitable[None]]] = {}
+        self._fallback_handler: Optional[Callable[[Update, ContextTypes.DEFAULT_TYPE], Awaitable[None]]] = None
 
     def register_handler(self, text: str, handler: Callable[[Update, ContextTypes.DEFAULT_TYPE], Awaitable[None]]):
         self._handlers[text] = handler
@@ -36,11 +36,11 @@ class BaseHandler(ABC):
                 return True
             except Exception as e:
                 logger.error(f"Error while handling '{text}': {e}")
-                await self._handlers.error(update, context, e)
+                await self._handle_error(update, context, e)
                 return False
 
         if self._fallback_handler:
-            await self._fallback_handler(update, context, text)
+            await self._fallback_handler(update, context)
             return True
 
         return False
