@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from modelsDB import User, Order, Product, OrderStatusEnum
+from MyDB.db_models import User, Order, Product, OrderStatusEnum
 
 
 def create_user(db: Session, telegram_id: int, username: str):

@@ -3,7 +3,6 @@ from telegram.ext import ContextTypes
 from service import Products, Product
 from handlers.basehandler import BaseHandler
 from keyboards import get_food_keyboard, get_main_keyboard, get_burger_buttons
-from MyDB.models import Product
 from service import add_to_cart, get_user_cart, create_new_cart
 from typing import Callable
 import logging

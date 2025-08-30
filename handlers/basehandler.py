@@ -1,12 +1,12 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from keyboards import get_main_keyboard, menu_btn_txt, price_btn_txt, call_btn_txt, get_food_keyboard, back_btn_txt, \
-    burger_btn_txt, get_burger_buttons
-from MyDB.models import User,Order,Product
-from MyDB.mysql_connector import db
+from keyboards import get_main_keyboard, menu_btn_txt, price_btn_txt, call_btn_txt, get_food_keyboard, back_btn_txt, burger_btn_txt, get_burger_buttons
 from service import *
 import os
 import json
+from MyDB.db_main import SessionLocal
+from MyDB.db_service import create_user
+from MyDB.db_main import get_db
 from abc import ABC, abstractmethod
 from typing import Dict, Callable, Optional, Awaitable
 import logging
@@ -53,10 +53,8 @@ class BaseHandler(ABC):
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    User.create_user(
-        telegram_id=user.id,
-        username=user.username
-    )
+    with get_db() as db:
+        create_user(db, user.id, user.username)
 
     create_new_cart(user.id)
 

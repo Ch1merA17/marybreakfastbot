@@ -1,5 +1,5 @@
-from MyDB.mydatabase import Base, engine
-from MyDB.modelsDB import User, Order, Product
+from MyDB.db_main import Base, engine
+from MyDB.db_models import User, Order, Product
 from sqlalchemy import text
 
 def init_db():
